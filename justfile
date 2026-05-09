@@ -1,4 +1,4 @@
-AGENT_FILES := "CLAUDE.md AGENTS.md .goosehints .github/copilot-instructions.md .claude .codex"
+AGENT_FILES := "CLAUDE.md AGENTS.md .goosehints .github/copilot-instructions.md .claude .agents .codex"
 
 # Remove agent instructions from the target directory
 [no-cd]
@@ -16,3 +16,6 @@ install-tools:
 [no-cd]
 install target-directory=".": (pre_clean target-directory) (install-tools)
     copier copy -f {{ justfile_directory() }}/template {{ target-directory }}
+    # Create symlinks for Codex compatibility (reads AGENTS.md and .agents/skills/)
+    cd {{target-directory}} && ln -sf CLAUDE.md AGENTS.md
+    cd {{target-directory}} && mkdir -p .agents && [ -d .claude/skills ] && ln -sf ../.claude/skills .agents/skills || true
